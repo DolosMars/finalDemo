@@ -11,9 +11,9 @@ import FirebaseFirestore
 import FirebaseFirestoreSwift
 import NukeUI
 /*struct userProfile: Codable, Identifiable {
-    @DocumentID var id: String?
-    let name: String
-}*/
+ @DocumentID var id: String?
+ let name: String
+ }*/
 
 struct gameLobby: View {
     @Binding var showGameLobbyView:Bool
@@ -59,14 +59,42 @@ struct gameLobby: View {
                     }
                 }
                 Spacer()
-                //padding()
-            }
-            Spacer()
-            /*Button("print"){
-                if let user = Auth.auth().currentUser {
-                    print(user.uid, user.email, user.displayName, user.photoURL)
+                HStack{
+                    Spacer()
+                    VStack{
+                        Spacer()
+                        Button(action: {
+                            //玩遊戲
+                            
+                        }, label: {
+                            Text("Play")
+                                .font(.system(size: 20))
+                                .foregroundColor(.blue)
+                                .bold()
+                        })
+                        
+                        Button(action: {
+                            //登出
+                            do {
+                               //try Auth.auth().signOut()
+                                showGameLobbyView = false
+                            } catch {
+                               print(error)
+                            }
+                        }, label: {
+                            Text("Quit")
+                                .font(.system(size: 20))
+                                .foregroundColor(.blue)
+                                .bold()
+                        })
+                        
+                        Spacer()
+                    }
+                    Spacer()
                 }
-             }*/
+            }
+            
+            Spacer()
         }.background(Image("slayTheSpire2").scaledToFill().opacity(0.4))
         .onAppear{
             let user = Auth.auth().currentUser

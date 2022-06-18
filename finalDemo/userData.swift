@@ -21,11 +21,15 @@ struct userData: View {
     @Binding var showUserDataView:Bool
     @State private var showCustomRoleView:Bool = false
     @State private var changeName:Bool = false
+    @State private var changeGender:Bool = false
     @State private var setName:String = ""
     @State private var user:User?
     @State private var photo = ""
     @State private var showPhotoStickers:Bool = false
-    @State private var showNameAlert:Bool = false
+    @State private var showAlert:Bool = false
+    @State private var genderNumber = 2
+    @State private var showGender = ""
+    let gender = ["男生", "女生", "其他"]
     
     var body: some View {
         NavigationView {
@@ -96,7 +100,7 @@ struct userData: View {
                                         }
                                         
                                     }
-                                    showNameAlert = true
+                                    showAlert = true
                                 }, label: {
                                     Text("確定")
                                 })
@@ -118,8 +122,8 @@ struct userData: View {
                             
                         }
                         
-                        /*HStack{
-                            Text("性別")
+                        HStack{
+                            /*Text("性別")
                             Spacer()
                             Button(action: {
                                 //修改性別
@@ -129,9 +133,67 @@ struct userData: View {
                                 .scaledToFill()
                                 .frame(width: 30, height: 30)
                                 .foregroundColor(.blue)
+                            })*/
+                            if changeGender == true
+                            {
+                                Picker(selection: $genderNumber, label: Text("選擇性別")){
+                                                        ForEach(gender.indices) { item in
+                                                            Text(gender[item])
+                                                        }
+                                                    }
+                                .pickerStyle(SegmentedPickerStyle())
+                                Spacer()
+                                Button(action: {
+                                    changeGender = false
+                                }, label: {
+                                    Text("取消")
+                                })
+                                Button(action: {
+                                    
+                                    changeGender = false
+                                    
+                                        let user = Auth.auth().currentUser
+                                        let db = Firestore.firestore()
+                                    let documentReference =
+                                        db.collection("userData").document(user!.uid)
+                                    documentReference.getDocument { document, error in
+                                        
+                                        guard let document = document,
+                                              document.exists,
+                                              var data = try? document.data(as: userProfile.self)
+                                        
+                                        else {
+                                            return
+                                        }
+                                        data.gender = gender[genderNumber]
+                                        do {
+                                            try documentReference.setData(from: data)
+                                        } catch {
+                                            print(error)
+                                        }
+                                        
+                                    }
+                                    showAlert = true
+                                }, label: {
+                                    Text("確定")
+                                })
+                            }else{
+                                Text("性別 \(showGender)")
+                                Spacer()
+                            }
+                            
+                            Button(action: {
+                                //修改姓名
+                                changeGender = true
+                            }, label: {
+                                Image(systemName: "square.and.pencil")
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 30, height: 30)
+                                .foregroundColor(.blue)
                             })
                             
-                        }*/
+                        }
                         
                         /*HStack{
                             Text("生日")
@@ -183,7 +245,7 @@ struct userData: View {
                             Text("登出")
                         })*/
                         
-                    }.alert(isPresented: $showNameAlert, content: {
+                    }.alert(isPresented: $showAlert, content: {
                         return Alert(title: Text("下次啟動時更換"))
                     })
                 
@@ -210,6 +272,7 @@ struct userData: View {
                     else {
                         setName = data.name
                     }
+                    showGender = data.gender
                     
                     if (data.photoStickers == "") {
                         photo = "person.crop.circle.fill"

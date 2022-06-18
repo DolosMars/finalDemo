@@ -14,6 +14,7 @@ struct userProfile: Codable, Identifiable {
     @DocumentID var id: String?
     var name: String
     var photoStickers: String
+    var gender: String
 }
 
 
@@ -70,7 +71,7 @@ struct register: View {
                         
                         let db = Firestore.firestore()
                         let userID = Auth.auth().currentUser
-                        let data = userProfile(name:"", photoStickers:"")
+                        let data = userProfile(name:"", photoStickers:"", gender:"")
                         do {
                             try db.collection("userData").document(userID!.uid).setData(from: data)
                         }catch{
