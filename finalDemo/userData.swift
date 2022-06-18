@@ -123,17 +123,6 @@ struct userData: View {
                         }
                         
                         HStack{
-                            /*Text("性別")
-                            Spacer()
-                            Button(action: {
-                                //修改性別
-                            }, label: {
-                                Image(systemName: "square.and.pencil")
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: 30, height: 30)
-                                .foregroundColor(.blue)
-                            })*/
                             if changeGender == true
                             {
                                 Picker(selection: $genderNumber, label: Text("選擇性別")){
@@ -234,16 +223,6 @@ struct userData: View {
                             
                         })
                         
-                        /*Button(action: {
-                            //登出
-                            do {
-                               try Auth.auth().signOut()
-                            } catch {
-                               print(error)
-                            }
-                        }, label: {
-                            Text("登出")
-                        })*/
                         
                     }.alert(isPresented: $showAlert, content: {
                         return Alert(title: Text("下次啟動時更換"))
