@@ -40,7 +40,7 @@ struct gameLobby: View {
     @State private var userID = ""
     @State private var showPhotoStickers:Bool = false
     @State private var showRoomPageView:Bool = false
-    
+    @State private var playerNumber = 0
     
     func randomRoomID() -> String {
         //隨機產生六碼房號
@@ -138,6 +138,8 @@ struct gameLobby: View {
                                         return
                                     }
                                     data2.roomID = roomID
+                                    playerNumber = 1
+                                    data2.playerNumber = String(playerNumber)
                                     data2.player1ID = userID
                                     do {
                                         try documentReference2.setData(from: data2)
@@ -164,9 +166,7 @@ struct gameLobby: View {
                                     .bold()
                                 
                             }
-                        }).fullScreenCover(isPresented: $showRoomPageView) {
-                            roomPage(showRoomPageView: $showRoomPageView, roomID: $roomID)
-                        }
+                        })
                         
                         ZStack{
                             
@@ -180,6 +180,164 @@ struct gameLobby: View {
                                     .foregroundColor(Color(red: 0, green: 0.36, blue: 0.68))
                                 Button(action: {
                                     //加入房間
+                                    playerNumber = 0
+                                    let db3 = Firestore.firestore()
+                                    let documentReference3 = db3.collection("roomData").document(inputRoomID)
+                                    documentReference3.getDocument { document, error in
+                                        
+                                        guard let document = document,
+                                              document.exists,
+                                              let data3 = try? document.data(as: roomData.self)
+                                        
+                                        else {
+                                            return
+                                        }
+                                        playerNumber = Int(data3.playerNumber)!
+                                        print(playerNumber)
+                                        
+                                        if (playerNumber == 1){
+                                            let user1 = Auth.auth().currentUser
+                                            let db2 = Firestore.firestore()
+                                            let documentReference1 = db2.collection("userData").document(user1!.uid)
+                                            documentReference1.getDocument { document, error in
+                                                
+                                                guard let document = document,
+                                                      document.exists,
+                                                      var data1 = try? document.data(as: userProfile.self)
+                                                
+                                                else {
+                                                    return
+                                                }
+                                                data1.roomID = inputRoomID
+                                                do {
+                                                    try documentReference1.setData(from: data1)
+                                                } catch {
+                                                    print(error)
+                                                }
+                                                
+                                                let documentReference2 = db2.collection("roomData").document(inputRoomID)
+                                                documentReference2.getDocument { document, error in
+                                                    
+                                                    guard let document = document,
+                                                          document.exists,
+                                                          var data2 = try? document.data(as: roomData.self)
+                                                    
+                                                    else {
+                                                        return
+                                                    }
+                                                    data2.roomID = inputRoomID
+                                                    playerNumber = playerNumber + 1
+                                                    print("加了你後有\(playerNumber)人")
+                                                    data2.playerNumber = String(playerNumber)
+                                                    data2.player2ID = userID
+                                                    do {
+                                                        try documentReference2.setData(from: data2)
+                                                    } catch {
+                                                        print(error)
+                                                    }
+                                                    print("roomID 是 \(inputRoomID)")
+                                                    roomID = inputRoomID
+                                                    showRoomPageView = true
+                                                }
+                                                
+                                            }
+                                        }
+                                        
+                                        if (playerNumber == 2){
+                                            let user1 = Auth.auth().currentUser
+                                            let db2 = Firestore.firestore()
+                                            let documentReference1 = db2.collection("userData").document(user1!.uid)
+                                            documentReference1.getDocument { document, error in
+                                                
+                                                guard let document = document,
+                                                      document.exists,
+                                                      var data1 = try? document.data(as: userProfile.self)
+                                                
+                                                else {
+                                                    return
+                                                }
+                                                data1.roomID = inputRoomID
+                                                do {
+                                                    try documentReference1.setData(from: data1)
+                                                } catch {
+                                                    print(error)
+                                                }
+                                                
+                                                let documentReference2 = db2.collection("roomData").document(inputRoomID)
+                                                documentReference2.getDocument { document, error in
+                                                    
+                                                    guard let document = document,
+                                                          document.exists,
+                                                          var data2 = try? document.data(as: roomData.self)
+                                                    
+                                                    else {
+                                                        return
+                                                    }
+                                                    data2.roomID = inputRoomID
+                                                    playerNumber = playerNumber + 1
+                                                    print("加了你後有\(playerNumber)人")
+                                                    data2.playerNumber = String(playerNumber)
+                                                    data2.player3ID = userID
+                                                    do {
+                                                        try documentReference2.setData(from: data2)
+                                                    } catch {
+                                                        print(error)
+                                                    }
+                                                    print("roomID 是 \(inputRoomID)")
+                                                    roomID = inputRoomID
+                                                    showRoomPageView = true
+                                                }
+                                                
+                                            }
+                                        }
+                                        if (playerNumber == 3){
+                                            let user1 = Auth.auth().currentUser
+                                            let db2 = Firestore.firestore()
+                                            let documentReference1 = db2.collection("userData").document(user1!.uid)
+                                            documentReference1.getDocument { document, error in
+                                                
+                                                guard let document = document,
+                                                      document.exists,
+                                                      var data1 = try? document.data(as: userProfile.self)
+                                                
+                                                else {
+                                                    return
+                                                }
+                                                data1.roomID = inputRoomID
+                                                do {
+                                                    try documentReference1.setData(from: data1)
+                                                } catch {
+                                                    print(error)
+                                                }
+                                                
+                                                let documentReference2 = db2.collection("roomData").document(inputRoomID)
+                                                documentReference2.getDocument { document, error in
+                                                    
+                                                    guard let document = document,
+                                                          document.exists,
+                                                          var data2 = try? document.data(as: roomData.self)
+                                                    
+                                                    else {
+                                                        return
+                                                    }
+                                                    data2.roomID = inputRoomID
+                                                    playerNumber = playerNumber + 1
+                                                    print("加了你後有\(playerNumber)人")
+                                                    data2.playerNumber = String(playerNumber)
+                                                    data2.player4ID = userID
+                                                    do {
+                                                        try documentReference2.setData(from: data2)
+                                                    } catch {
+                                                        print(error)
+                                                    }
+                                                    print("roomID 是 \(inputRoomID)")
+                                                    roomID = inputRoomID
+                                                    showRoomPageView = true
+                                                }
+                                                
+                                            }
+                                        }
+                                    }
                                 }, label: {
                                     Text("加入房間")
                                         .font(.system(size: 30))
@@ -188,14 +346,16 @@ struct gameLobby: View {
                                 })
                                 
                             }
+                        }.fullScreenCover(isPresented: $showRoomPageView) {
+                            roomPage(showRoomPageView: $showRoomPageView, roomID: $roomID)
                         }
                         Button(action: {
                             //登出
                             do {
-                               //try Auth.auth().signOut()
+                                //try Auth.auth().signOut()
                                 showGameLobbyView = false
                             } catch {
-                               print(error)
+                                print(error)
                             }
                         }, label: {
                             ZStack{
@@ -219,6 +379,7 @@ struct gameLobby: View {
             
             Spacer()
         }.background(Image("slayTheSpire2").scaledToFill().opacity(0.4))
+        
         .onAppear{
             let user = Auth.auth().currentUser
             

@@ -21,10 +21,27 @@ struct roomPage: View {
     @State private var player2SelectRole = 1
     @State private var player3SelectRole = 1
     @State private var player4SelectRole = 1
+    
     @State private var player1ID = ""
     @State private var player1Name = ""
     @State private var player1photo = "person.crop.circle.fill"
     @State private var showPlayer1PhotoStickers = false
+    
+    @State private var player2ID = ""
+    @State private var player2Name = ""
+    @State private var player2photo = "person.crop.circle.fill"
+    @State private var showPlayer2PhotoStickers = false
+    
+    @State private var player3ID = ""
+    @State private var player3Name = ""
+    @State private var player3photo = "person.crop.circle.fill"
+    @State private var showPlayer3PhotoStickers = false
+    
+    @State private var player4ID = ""
+    @State private var player4Name = ""
+    @State private var player4photo = "person.crop.circle.fill"
+    @State private var showPlayer4PhotoStickers = false
+    
     @State private var playerNumber = 0
     
     var body: some View {
@@ -71,11 +88,25 @@ struct roomPage: View {
                 
                 //玩家二
                 VStack{
-                    Image(systemName: "person.crop.circle.fill")
-                        .resizable()
-                        //.scaledToFill()
-                        .frame(width: 100, height: 100)
-                        .padding()
+                    if showPlayer2PhotoStickers{
+                        LazyImage(source:player2photo)
+                            //.resizable()
+                            //.scaledToFill()
+                            .frame(width: 100, height: 100)
+                            .padding()
+                        
+                    }else{
+                        Image(systemName: player2photo)
+                            .resizable()
+                            //.scaledToFill()
+                            .frame(width: 100, height: 100)
+                            .padding()
+                    }
+                    Text(player2Name)
+                        .font(.system(size: 20))
+                        .foregroundColor(Color(red: 0, green: 0.36, blue: 0.68))
+                        .bold()
+                    
                     Picker(selection: $player2SelectRole, label: Text("選擇角色")) {
                         Text("鐵衛士").tag(1)
                         Text("寂靜獵手").tag(2)
@@ -94,11 +125,24 @@ struct roomPage: View {
                 
                 //玩家三
                 VStack{
-                    Image(systemName: "person.crop.circle.fill")
-                        .resizable()
-                        //.scaledToFill()
-                        .frame(width: 100, height: 100)
-                        .padding()
+                    if showPlayer3PhotoStickers{
+                        LazyImage(source:player3photo)
+                            //.resizable()
+                            //.scaledToFill()
+                            .frame(width: 100, height: 100)
+                            .padding()
+                        
+                    }else{
+                        Image(systemName: player3photo)
+                            .resizable()
+                            //.scaledToFill()
+                            .frame(width: 100, height: 100)
+                            .padding()
+                    }
+                    Text(player3Name)
+                        .font(.system(size: 20))
+                        .foregroundColor(Color(red: 0, green: 0.36, blue: 0.68))
+                        .bold()
                     Picker(selection: $player3SelectRole, label: Text("選擇角色")) {
                         Text("鐵衛士").tag(1)
                         Text("寂靜獵手").tag(2)
@@ -117,11 +161,24 @@ struct roomPage: View {
                 }
                 //玩家四
                 VStack{
-                    Image(systemName: "person.crop.circle.fill")
-                        .resizable()
-                        //.scaledToFill()
-                        .frame(width: 100, height: 100)
-                        .padding()
+                    if showPlayer4PhotoStickers{
+                        LazyImage(source:player4photo)
+                            //.resizable()
+                            //.scaledToFill()
+                            .frame(width: 100, height: 100)
+                            .padding()
+                        
+                    }else{
+                        Image(systemName: player4photo)
+                            .resizable()
+                            //.scaledToFill()
+                            .frame(width: 100, height: 100)
+                            .padding()
+                    }
+                    Text(player4Name)
+                        .font(.system(size: 20))
+                        .foregroundColor(Color(red: 0, green: 0.36, blue: 0.68))
+                        .bold()
                     Picker(selection: $player4SelectRole, label: Text("選擇角色")) {
                         Text("鐵衛士").tag(1)
                         Text("寂靜獵手").tag(2)
@@ -152,24 +209,83 @@ struct roomPage: View {
                     else {
                         return
                     }
+                    playerNumber = Int(data.playerNumber)!
                     player1ID = data.player1ID
-                    print("player1ID是\(data.player1ID)")
-                    let documentReference2 = db.collection("userData").document(data.player1ID)
+                    player2ID = data.player2ID
+                    player3ID = data.player3ID
+                    player4ID = data.player4ID
+                    
+                    if (player1ID != ""){
+                        let documentReference2 = db.collection("userData").document(data.player1ID)
 
-                    documentReference2.getDocument { document, error in
-                        
-                        guard let document = document,
-                              document.exists,
-                              let data = try? document.data(as: userProfile.self)
-                        
-                        else {
-                            return
+                        documentReference2.getDocument { document, error in
+                            
+                            guard let document = document,
+                                  document.exists,
+                                  let data = try? document.data(as: userProfile.self)
+                            
+                            else {
+                                return
+                            }
+                            player1photo = data.photoStickers
+                            player1Name = data.name
+                            showPlayer1PhotoStickers = true
                         }
-                        player1photo = data.photoStickers
-                        player1Name = data.name
-                        showPlayer1PhotoStickers = true
                     }
                     
+                    if (player2ID != ""){
+                        let documentReference2 = db.collection("userData").document(data.player2ID)
+
+                        documentReference2.getDocument { document, error in
+                            
+                            guard let document = document,
+                                  document.exists,
+                                  let data = try? document.data(as: userProfile.self)
+                            
+                            else {
+                                return
+                            }
+                            player2photo = data.photoStickers
+                            player2Name = data.name
+                            showPlayer2PhotoStickers = true
+                        }
+                    }
+
+                    if (player3ID != ""){
+                        let documentReference2 = db.collection("userData").document(data.player3ID)
+
+                        documentReference2.getDocument { document, error in
+                            
+                            guard let document = document,
+                                  document.exists,
+                                  let data = try? document.data(as: userProfile.self)
+                            
+                            else {
+                                return
+                            }
+                            player3photo = data.photoStickers
+                            player3Name = data.name
+                            showPlayer3PhotoStickers = true
+                        }
+                    }
+                    
+                    if (player4ID != ""){
+                        let documentReference2 = db.collection("userData").document(data.player4ID)
+
+                        documentReference2.getDocument { document, error in
+                            
+                            guard let document = document,
+                                  document.exists,
+                                  let data = try? document.data(as: userProfile.self)
+                            
+                            else {
+                                return
+                            }
+                            player4photo = data.photoStickers
+                            player4Name = data.name
+                            showPlayer3PhotoStickers = true
+                        }
+                    }
                 }
 
                 
@@ -187,6 +303,29 @@ struct roomPage: View {
             
         Button(action: {
             showRoomPageView = false
+            //人都能進來
+            let db = Firestore.firestore()
+            let documentReference = db.collection("roomData").document(roomID)
+
+            documentReference.getDocument { document, error in
+                
+                guard let document = document,
+                      document.exists,
+                      var data = try? document.data(as: roomData.self)
+                
+                else {
+                    return
+                }
+                
+                var personNumber = Int(data.playerNumber)
+                data.playerNumber = String(personNumber!-1)
+                do {
+                    try documentReference.setData(from: data)
+                } catch {
+                    print(error)
+                }
+                
+            }
         }, label: {
             Text("退出此房間")
         })
