@@ -39,16 +39,6 @@ struct customRole: View {
         }
     }
     
-    /*func setUserPhoto(url: URL) {
-        let changeRequest = Auth.auth().currentUser?.createProfileChangeRequest()
-        changeRequest?.photoURL = url
-        changeRequest?.commitChanges(completion: { error in
-            guard error == nil else {
-                print(error?.localizedDescription)
-                return
-            }
-        })
-    }*/
     
     var body: some View {
         HStack{

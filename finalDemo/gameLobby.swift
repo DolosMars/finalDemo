@@ -10,10 +10,24 @@ import FirebaseAuth
 import FirebaseFirestore
 import FirebaseFirestoreSwift
 import NukeUI
-/*struct userProfile: Codable, Identifiable {
- @DocumentID var id: String?
- let name: String
- }*/
+
+
+struct roomData: Codable, Identifiable {
+    @DocumentID var id: String?
+    
+    var roomID:String
+    var player1ID: String
+    var player2ID: String
+    var player3ID: String
+    var player4ID: String
+    var player1Role: String
+    var player2Role: String
+    var player3Role: String
+    var player4Role: String
+    var playerNumber:String
+}
+
+
 
 struct gameLobby: View {
     @Binding var showGameLobbyView:Bool
@@ -21,8 +35,37 @@ struct gameLobby: View {
     @State private var user:User?
     @State private var name = ""
     @State private var photo = ""
+    @State private var roomID = ""
+    @State private var inputRoomID = ""
+    @State private var userID = ""
     @State private var showPhotoStickers:Bool = false
+    @State private var showRoomPageView:Bool = false
     
+    
+    func randomRoomID() -> String {
+        //隨機產生六碼房號
+        var generatedNumber = ""
+        for _ in 0...5 {
+            let number = Int.random(in: 0...9)
+            generatedNumber += String(number)
+        }
+        print("房號：\(generatedNumber)")
+        
+        roomID = generatedNumber
+        
+        //產生房間資料夾
+        let db = Firestore.firestore()
+        let data = roomData(id: "", roomID: "" , player1ID: "", player2ID: "", player3ID: "", player4ID: "", player1Role: "", player2Role: "", player3Role: "", player4Role: "", playerNumber: "")
+        do {
+            try db.collection("roomData").document(generatedNumber).setData(from: data)
+        }catch{
+            print("房間建立錯誤")
+            print(error)
+        }
+        
+        return generatedNumber
+        
+    }
     var body: some View {
         VStack{
             HStack{
@@ -64,15 +107,88 @@ struct gameLobby: View {
                     VStack{
                         Spacer()
                         Button(action: {
-                            //玩遊戲
+                            //創一個新房間
+                            let user1 = Auth.auth().currentUser
+                            let db2 = Firestore.firestore()
+                            let documentReference1 = db2.collection("userData").document(user1!.uid)
+                            documentReference1.getDocument { document, error in
+                                
+                                guard let document = document,
+                                      document.exists,
+                                      var data1 = try? document.data(as: userProfile.self)
+                                
+                                else {
+                                    return
+                                }
+                                data1.roomID = randomRoomID()
+                                do {
+                                    try documentReference1.setData(from: data1)
+                                } catch {
+                                    print(error)
+                                }
+                                
+                                let documentReference2 = db2.collection("roomData").document(roomID)
+                                documentReference2.getDocument { document, error in
+                                    
+                                    guard let document = document,
+                                          document.exists,
+                                          var data2 = try? document.data(as: roomData.self)
+                                    
+                                    else {
+                                        return
+                                    }
+                                    data2.roomID = roomID
+                                    data2.player1ID = userID
+                                    do {
+                                        try documentReference2.setData(from: data2)
+                                    } catch {
+                                        print(error)
+                                    }
+                                    print("roomID 是 \(roomID)")
+                                    
+                                    showRoomPageView = true
+                                }
+                                
+                            }
+                            
                             
                         }, label: {
-                            Text("Play")
-                                .font(.system(size: 20))
-                                .foregroundColor(.blue)
-                                .bold()
-                        })
+                            ZStack{
+                                
+                                RoundedRectangle(cornerRadius: 5)
+                                    .foregroundColor(Color(red: 0.49, green: 0.72, blue: 0.87))
+                                    .frame(width: 125, height: 50, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
+                                Text("創建房間")
+                                    .font(.system(size: 30))
+                                    .foregroundColor(Color(red: 0, green: 0.36, blue: 0.68))
+                                    .bold()
+                                
+                            }
+                        }).fullScreenCover(isPresented: $showRoomPageView) {
+                            roomPage(showRoomPageView: $showRoomPageView, roomID: $roomID)
+                        }
                         
+                        ZStack{
+                            
+                            RoundedRectangle(cornerRadius: 5)
+                                .foregroundColor(Color(red: 0.49, green: 0.72, blue: 0.87))
+                                .frame(width: 125, height: 100, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
+                            VStack{
+                                TextField("請輸入房號", text: $inputRoomID)
+                                    .frame(width: 80, height: 30, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
+                                    .font(.system(size: 20))
+                                    .foregroundColor(Color(red: 0, green: 0.36, blue: 0.68))
+                                Button(action: {
+                                    //加入房間
+                                }, label: {
+                                    Text("加入房間")
+                                        .font(.system(size: 30))
+                                        .foregroundColor(Color(red: 0, green: 0.36, blue: 0.68))
+                                        .bold()
+                                })
+                                
+                            }
+                        }
                         Button(action: {
                             //登出
                             do {
@@ -82,10 +198,17 @@ struct gameLobby: View {
                                print(error)
                             }
                         }, label: {
-                            Text("Quit")
-                                .font(.system(size: 20))
-                                .foregroundColor(.blue)
-                                .bold()
+                            ZStack{
+                                
+                                RoundedRectangle(cornerRadius: 5)
+                                    .foregroundColor(Color(red: 0.49, green: 0.72, blue: 0.87))
+                                    .frame(width: 125, height: 50, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
+                                Text("退出")
+                                    .font(.system(size: 30))
+                                    .foregroundColor(Color(red: 0, green: 0.36, blue: 0.68))
+                                    .bold()
+                                
+                            }
                         })
                         
                         Spacer()
@@ -101,13 +224,13 @@ struct gameLobby: View {
             
             
             let db = Firestore.firestore()
-            let documentReference =
-                db.collection("userData").document(user!.uid)
+            let documentReference = db.collection("userData").document(user!.uid)
+            userID = user!.uid
             documentReference.getDocument { document, error in
                 
                 guard let document = document,
                       document.exists,
-                      var data = try? document.data(as: userProfile.self)
+                      let data = try? document.data(as: userProfile.self)
                 
                 else {
                     return
@@ -127,6 +250,7 @@ struct gameLobby: View {
                     photo = data.photoStickers
                     showPhotoStickers = true
                 }
+                
             }
             
         }

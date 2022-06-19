@@ -15,6 +15,16 @@ struct userProfile: Codable, Identifiable {
     var name: String
     var photoStickers: String
     var gender: String
+    var rule: String
+    var Allcard: [String]
+    var healthPoint: Int
+    var money: Int
+    var energy: Int
+    var handCard: [String]
+    var usedCard: [String]
+    var levels: Int
+    var roomID: String
+    //神器 敵人血量
 }
 
 
@@ -71,11 +81,11 @@ struct register: View {
                         
                         let db = Firestore.firestore()
                         let userID = Auth.auth().currentUser
-                        let data = userProfile(name:"", photoStickers:"", gender:"")
+                        let data = userProfile(name:"", photoStickers:"", gender:"",rule:"",Allcard:[""],healthPoint: 0,money: 0,energy: 0,handCard:[""],usedCard: [""],
+                                               levels:0,roomID:"")
                         do {
                             try db.collection("userData").document(userID!.uid).setData(from: data)
                         }catch{
-                            print("上傳名字錯誤")
                             print(error)
                         }
                         
