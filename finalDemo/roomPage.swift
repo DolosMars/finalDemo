@@ -23,22 +23,22 @@ struct roomPage: View {
     @State private var player4SelectRole = 1
     
     @State private var player1ID = ""
-    @State private var player1Name = ""
+    @State private var player1Name = " "
     @State private var player1photo = "person.crop.circle.fill"
     @State private var showPlayer1PhotoStickers = false
     
     @State private var player2ID = ""
-    @State private var player2Name = ""
+    @State private var player2Name = " "
     @State private var player2photo = "person.crop.circle.fill"
     @State private var showPlayer2PhotoStickers = false
     
     @State private var player3ID = ""
-    @State private var player3Name = ""
+    @State private var player3Name = " "
     @State private var player3photo = "person.crop.circle.fill"
     @State private var showPlayer3PhotoStickers = false
     
     @State private var player4ID = ""
-    @State private var player4Name = ""
+    @State private var player4Name = " "
     @State private var player4photo = "person.crop.circle.fill"
     @State private var showPlayer4PhotoStickers = false
     
@@ -198,6 +198,7 @@ struct roomPage: View {
             }.onAppear{
                 print(roomID)
                 let db = Firestore.firestore()
+                db.collection("roomData").addSnapshotListener{_,_ in
                 let documentReference = db.collection("roomData").document(roomID)
 
                 documentReference.getDocument { document, error in
@@ -288,14 +289,14 @@ struct roomPage: View {
                     }
                 }
 
-                
+                }
                 /*for index in 0...5 {
                     
                 }*/
             }
         
             Button(action: {
-                showRoomPageView = false
+                print("room現在有\(playerNumber) gogo")
             }, label: {
                 Text("出發")
                 
@@ -330,8 +331,8 @@ struct roomPage: View {
             Text("退出此房間")
         })
         }
-    }
-}
+        }}
+
 
 struct roomPage_Previews: PreviewProvider {
     static var previews: some View {
