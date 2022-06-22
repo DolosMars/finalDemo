@@ -17,6 +17,9 @@ struct roomPage: View {
     
     @Binding var showRoomPageView:Bool
     @Binding var roomID:String
+    
+    @State private var showGamePageView = false
+    
     @State private var player1SelectRole = 1
     @State private var player2SelectRole = 1
     @State private var player3SelectRole = 1
@@ -43,6 +46,10 @@ struct roomPage: View {
     @State private var showPlayer4PhotoStickers = false
     
     @State private var playerNumber = 0
+    
+    @State private var showAlert = false
+    @State private var alertMessage = " "
+    
     
     var body: some View {
         VStack{
@@ -297,11 +304,23 @@ struct roomPage: View {
         
             Button(action: {
                 print("room現在有\(playerNumber) gogo")
+                if (playerNumber == 4){
+                    showGamePageView = true
+                }
+                else
+                {
+                    alertMessage = "房間目前有\(playerNumber)人，未達四人"
+                    showAlert = true
+                }
             }, label: {
                 Text("出發")
                 
-            })
-            
+            }).alert(isPresented: $showAlert, content: {
+                return Alert(title: Text(alertMessage))
+            }).fullScreenCover(isPresented: $showGamePageView) {
+                gamePage()
+            }
+
         Button(action: {
             showRoomPageView = false
             //人都能進來
